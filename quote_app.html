@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Random Quote App</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --surface-0: #f4f3ef;
+      --surface-1: #eeede9;
+      --surface-2: #ffffff;
+      --text-primary: #1a1a18;
+      --text-secondary: #5f5e5a;
+      --text-muted: #888780;
+      --border: rgba(0,0,0,0.10);
+      --border-strong: rgba(0,0,0,0.18);
+      --bg-accent: #e6f1fb;
+      --text-accent: #185fa5;
+      --radius: 8px;
+      --font-sans: system-ui, -apple-system, sans-serif;
+      --font-voice: Georgia, 'Times New Roman', serif;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --surface-0: #1a1a18;
+        --surface-1: #232320;
+        --surface-2: #2c2c2a;
+        --text-primary: #f0ede6;
+        --text-secondary: #b4b2a9;
+        --text-muted: #888780;
+        --border: rgba(255,255,255,0.10);
+        --border-strong: rgba(255,255,255,0.18);
+        --bg-accent: #0c447c;
+        --text-accent: #85b7eb;
+      }
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--surface-0);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.25rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    header h1 {
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+    }
+
+    header p {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .card {
+      background: var(--surface-2);
+      border: 0.5px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem 2rem 2rem;
+      max-width: 560px;
+      width: 100%;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .card.fade-out {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+
+    .card.fade-in {
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .quote-icon {
+      font-size: 52px;
+      line-height: 1;
+      color: var(--border-strong);
+      margin-bottom: 1.25rem;
+      font-family: Georgia, serif;
+      display: block;
+      user-select: none;
+    }
+
+    .quote-text {
+      font-family: var(--font-voice);
+      font-size: 20px;
+      line-height: 1.65;
+      color: var(--text-primary);
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.01em;
+    }
+
+    .divider {
+      width: 36px;
+      height: 1.5px;
+      background: var(--border-strong);
+      margin-bottom: 1.25rem;
+      border-radius: 2px;
+    }
+
+    .author-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .author-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--bg-accent);
+      color: var(--text-accent);
+      font-size: 12px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .author-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .author-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .tag-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 0.5px solid var(--border);
+    }
+
+    .tag {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 100px;
+      background: var(--surface-1);
+      color: var(--text-secondary);
+      border: 0.5px solid var(--border);
+    }
+
+    .actions {
+      margin-top: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 560px;
+      width: 100%;
+    }
+
+    .btn-group { display: flex; gap: 10px; }
+
+    button {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      height: 40px;
+      border-radius: var(--radius);
+      border: 0.5px solid var(--border-strong);
+      background: transparent;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      padding: 0 18px;
+      font-weight: 500;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    button:hover { background: var(--surface-1); }
+    button:active { transform: scale(0.98); }
+
+    .btn-copy {
+      color: var(--text-secondary);
+      border-color: var(--border);
+      font-weight: 400;
+    }
+
+    .counter {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Daily Quotes</h1>
+    <p>A little wisdom for your day</p>
+  </header>
+
+  <div class="card fade-in" id="quoteCard">
+    <span class="quote-icon" aria-hidden="true">"</span>
+    <p class="quote-text" id="quoteText"></p>
+    <div class="divider"></div>
+    <div class="author-row">
+      <div class="author-avatar" id="authorAvatar"></div>
+      <div>
+        <div class="author-name" id="authorName"></div>
+        <div class="author-label" id="authorDesc"></div>
+      </div>
+    </div>
+    <div class="tag-row" id="tagRow"></div>
+  </div>
+
+  <div class="actions">
+    <div class="btn-group">
+      <button onclick="nextQuote()">
+        <i class="ti ti-refresh" style="font-size:15px;" aria-hidden="true"></i>
+        New quote
+      </button>
+      <button class="btn-copy" onclick="copyQuote()" id="copyBtn" aria-label="Copy quote">
+        <i class="ti ti-copy" style="font-size:14px;" aria-hidden="true"></i>
+        Copy
+      </button>
+    </div>
+    <span class="counter" id="counter"></span>
+  </div>
+
+  <script>
+    const quotes = [
+      { text: "The only way to do great work is to love what you do. If you haven't found it yet, keep looking. Don't settle.", author: "Steve Jobs", desc: "Co-founder, Apple", tags: ["passion", "work", "purpose"] },
+      { text: "In the middle of every difficulty lies opportunity.", author: "Albert Einstein", desc: "Theoretical physicist", tags: ["resilience", "mindset"] },
+      { text: "It does not matter how slowly you go as long as you do not stop.", author: "Confucius", desc: "Chinese philosopher", tags: ["perseverance", "progress"] },
+      { text: "You miss 100% of the shots you don't take.", author: "Wayne Gretzky", desc: "Hockey legend", tags: ["courage", "action"] },
+      { text: "Whether you think you can, or you think you can't — you're right.", author: "Henry Ford", desc: "Founder, Ford Motor Company", tags: ["mindset", "belief"] },
+      { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt", desc: "Former First Lady of the U.S.", tags: ["dreams", "inspiration"] },
+      { text: "Two roads diverged in a wood, and I — I took the one less traveled by, and that has made all the difference.", author: "Robert Frost", desc: "American poet", tags: ["choice", "individuality"] },
+      { text: "Simplicity is the ultimate sophistication.", author: "Leonardo da Vinci", desc: "Renaissance polymath", tags: ["design", "simplicity"] },
+      { text: "Life is what happens when you're busy making other plans.", author: "John Lennon", desc: "Musician & peace activist", tags: ["life", "presence"] },
+      { text: "Be the change you wish to see in the world.", author: "Mahatma Gandhi", desc: "Independence leader", tags: ["change", "action"] },
+      { text: "Not everything that is faced can be changed, but nothing can be changed until it is faced.", author: "James Baldwin", desc: "Author & activist", tags: ["truth", "courage"] },
+      { text: "We know what we are, but know not what we may be.", author: "William Shakespeare", desc: "Playwright & poet", tags: ["potential", "identity"] }
+    ];
+
+    let current = -1;
+    let shown = 0;
+
+    function initials(name) {
+      return name.split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase();
+    }
+
+    function renderQuote(idx) {
+      const q = quotes[idx];
+      document.getElementById("quoteText").textContent = q.text;
+      document.getElementById("authorName").textContent = q.author;
+      document.getElementById("authorDesc").textContent = q.desc;
+      document.getElementById("authorAvatar").textContent = initials(q.author);
+      document.getElementById("tagRow").innerHTML = q.tags.map(t => `<span class="tag">${t}</span>`).join("");
+      document.getElementById("counter").textContent = shown + " of " + quotes.length + " quotes";
+    }
+
+    function nextQuote() {
+      const card = document.getElementById("quoteCard");
+      card.classList.add("fade-out");
+      setTimeout(() => {
+        let next;
+        do { next = Math.floor(Math.random() * quotes.length); } while (next === current && quotes.length > 1);
+        current = next;
+        shown = Math.min(shown + 1, quotes.length);
+        renderQuote(current);
+        card.classList.remove("fade-out");
+        card.classList.remove("fade-in");
+        void card.offsetWidth;
+        card.classList.add("fade-in");
+      }, 280);
+      document.getElementById("copyBtn").innerHTML = '<i class="ti ti-copy" style="font-size:14px;" aria-hidden="true"></i> Copy';
+    }
+
+    function copyQuote() {
+      const q = quotes[current];
+      navigator.clipboard.writeText('"' + q.text + '" — ' + q.author).then(() => {
+        const btn = document.getElementById("copyBtn");
+        btn.innerHTML = '<i class="ti ti-check" style="font-size:14px;" aria-hidden="true"></i> Copied';
+        setTimeout(() => {
+          btn.innerHTML = '<i class="ti ti-copy" style="font-size:14px;" aria-hidden="true"></i> Copy';
+        }, 1800);
+      });
+    }
+
+    current = Math.floor(Math.random() * quotes.length);
+    shown = 1;
+    renderQuote(current);
+  </script>
+</body>
+</html>
